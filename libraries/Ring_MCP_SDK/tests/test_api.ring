@@ -1,4 +1,4 @@
-load "../src/mcp.ring"
+load "mcp.ring"
 
 func main
     ? "Running Layer 1 Tests..."

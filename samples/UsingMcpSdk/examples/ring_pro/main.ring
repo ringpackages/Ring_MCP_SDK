@@ -4,7 +4,7 @@
 # ==========================================================
 
 load "mcp.ring"
-load "g:/Ring_MCP_SDK/examples/ring_pro/logic.ring"
+load "C:/ring/samples/UsingMcpSdk/examples/ring_pro/logic.ring"
 
 
 

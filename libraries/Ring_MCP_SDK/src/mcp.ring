@@ -1,6 +1,6 @@
 # mcp.ring - Entry point for the Ring MCP SDK
 
-//load "stdlibcore.ring"
+
 # Load core dependencies and bootstrap
 load "core/deps.ring"
 

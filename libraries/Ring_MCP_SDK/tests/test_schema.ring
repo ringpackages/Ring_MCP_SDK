@@ -1,4 +1,4 @@
-load "../src/schema/schema.ring"
+load "mcp.ring"
 
 func main
     ? "Running Layer 2 Tests..."

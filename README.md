@@ -23,18 +23,29 @@ The SDK is built using a professional 6-layer approach:
 5. **Middleware**: Chained logic for logging and error handling.
 6. **Core**: Dependency management and bootstrap.
 
-## 📦 Installation
+---
 
-Clone this repository and load the main entry point in your Ring application:
+## Dependencies
+
+All installed via RingPM:
 
 ```ring
-load "path/to/src/mcp.ring"
+ringpm install simplejson from ysdragon       # JSON support
+ringpm install bolt       from ysdragon       # HTTP transport
+```
+---
+## 📦 Installation
+
+via RingPM:
+
+```ring
+ringpm install Ring_MCP_SDK from Azzeddine2017
 ```
 
 ## 🛠 Quick Start (Stdio)
 
 ```ring
-load "src/mcp.ring"
+load "mcp.ring"
 
 oServer = new MCPServer {
     name    = "my-mcp-server"
@@ -59,14 +70,44 @@ oServer.start("stdio")
 
 Using the high-performance **Bolt** framework:
 
+# Start the server in HTTP mode (Port 3000)
 ```ring
-# Start as an HTTP server on port 3000
-oServer.start("http")
+load "mcp.ring"
 
-# Start as an SSE server
-oServer.start("sse")
+# Create the server
+oServer = new MCPServer {
+    name    = "http-mcp-server"
+    version = "1.0.0"
+}
+
+# Register a tool
+oServer.tool(new MCPTool {
+    name        = "calculate"
+    description = "Add two numbers"
+    oSchema     = new SchemaBuilder {
+        required("a", "number", "First number")
+        required("b", "number", "Second number")
+    }
+    on_call = func(aArgs) {
+        result = 0 + aArgs[:a] + aArgs[:b]
+        return [[:type = "text", :text = "Result is: " + result]]
+    }
+})
+
+fputs(stderr, "Starting HTTP MCP Server..." + nl)
+fputs(stderr, "Endpoints:" + nl)
+fputs(stderr, "  - GET  /        (Info)" + nl)
+fputs(stderr, "  - GET  /health  (Status)" + nl)
+fputs(stderr, "  - POST /mcp     (JSON-RPC API)" + nl)
+
+# Start the server in HTTP mode (Port 3000)
+oServer.start("http")
 ```
 
+# Start as an SSE server
+```ring
+oServer.start("sse")
+```
 ## 📝 Auto-Generated Documentation
 
 Generate a full documentation of your server's capabilities instantly:
