@@ -1,1 +1,1 @@
-load "../../libraries\Ring_MCP_SDK\src\mcp.ring"
+load "../../libraries/Ring_MCP_SDK/src/mcp.ring"
