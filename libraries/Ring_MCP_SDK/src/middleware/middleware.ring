@@ -4,11 +4,12 @@
 
 # Global error handler as a safety net
 
-func ringvm_errorhandler
+/*func ringvm_errorhandler
     # This is called for any unhandled Ring error
     # In a production SDK, we would format this as JSON-RPC and exit gracefully
     fputs(stderr, "CRITICAL ERROR: " + cCatchError + nl)
     ringvm_passerror()
+*/
 
 
 class LoggerMiddleware

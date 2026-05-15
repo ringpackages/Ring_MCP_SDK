@@ -1,17 +1,6 @@
 # Layer 2: Schema Engine
 # Handles validation and JSON schema generation
 
-func required_string
-    return "string"
-
-func optional_string
-    return "string"
-
-func required_number
-    return "number"
-
-func optional_number
-    return "number"
 
 class SchemaBuilder
     aParams = []

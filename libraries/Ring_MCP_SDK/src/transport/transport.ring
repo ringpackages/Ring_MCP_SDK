@@ -1,5 +1,7 @@
 load "bolt.ring"
- 
+
+aRes = null
+
 func mcp_json_encode aMsg
     cJson = json_encode(aMsg)
     # Global replacement for Booleans
@@ -34,9 +36,13 @@ class StdioTransport
 
     func run oServer
         while true
+            if feof(stdin) bye ok
             cLine = ""
             give cLine
-            if len(cLine) = 0 exit ok
+            if len(cLine) = 0 
+                if feof(stdin) bye ok
+                loop 
+            ok
             cLine = trim(cLine)
             if cLine = "" loop ok
             
@@ -51,7 +57,7 @@ class StdioTransport
                 aRes = oServer.get_router().handle_message(oServer, aMsg)
                 if not isnull(aRes)
                     fputs(stdout, mcp_json_encode(aRes) + nl)
-                    fflush(stdout)
+                    
                 ok
             catch
                 fputs(stderr, "Error handling message: " + cCatchError + nl)
@@ -60,15 +66,24 @@ class StdioTransport
 
     func send aMsg
         fputs(stdout, mcp_json_encode(aMsg) + nl)
-        fflush(stdout)
+       
 
 
 class HttpTransport
+    
     func run oServer
         new Bolt() {
             port = 3000
+            enableCors()
+            enableLogging()
+            homepage() # Automatic homepage with server info
             
-            @get("/", func {
+            @before(func {
+                # Logging middleware using Bolt's logger
+                $bolt.log("[MCP-HTTP] " + $bolt.method() + " " + $bolt.path())
+            })
+
+            @get("/info", func {
                 $bolt.json([
                     :name    = oServer.name,
                     :version = oServer.version,
@@ -92,16 +107,16 @@ class HttpTransport
         }
 
 class SseTransport
+    oBolt = null
+
     func run oServer
+        oTransport = self
         new Bolt() {
-            port = 3001 # Different port for SSE to avoid conflict if both run
+            oTransport.oBolt = self
+            port = 3001 
+            enableCors()
             
-            @get("/sse", func {
-                $bolt.sse(func {
-                    # This keeps the connection open for server-to-client notifications
-                    # In a full implementation, we would register this client in the session
-                })
-            })
+            @sse("/sse")
 
             @post("/mcp", func {
                 aMsg = $bolt.jsonBody()
@@ -115,8 +130,73 @@ class SseTransport
         }
 
     func send aMsg
-       see mcp_json_encode(aMsg) + nl
+        if not isnull(oBolt)
+            oBolt.sseBroadcast("/sse", mcp_json_encode(aMsg))
+        ok
+
+class WebSocketTransport
+    oBolt = null
+
+    func run oServer
+        oTransport = self
+        new Bolt() {
+            oTransport.oBolt = self
+            port = 3002
+            enableCors()
+
+            @ws("/mcp",
+                func { # onConnect
+                    $bolt.wsSend("Connected to Ring MCP WebSocket")
+                },
+                func { # onMessage
+                    cMsg = $bolt.wsEventMessage()
+                    aMsg = json_decode(cMsg)
+                    aRes = oServer.get_router().handle_message(oServer, aMsg)
+                    if not isnull(aRes)
+                        $bolt.wsSend(mcp_json_encode(aRes))
+                    ok
+                },
+                func { # onDisconnect
+                }
+            )
+        }
+
+    func send aMsg
+        if not isnull(oBolt)
+            oBolt.wsBroadcast(mcp_json_encode(aMsg))
+        ok
+
+class HttpClientTransport
+    Url = "http://localhost:3000/mcp"
+    Client 
+
+    func run rClient
+        self.Client = ref(rClient)
+        return self
+
+    func send aMsg
+        load "libcurl.ring"
+        curl = curl_easy_init()
         
+        cPostData = mcp_json_encode(aMsg)
+        
+        curl_easy_setopt(curl, CURLOPT_URL, Url)
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, cPostData)
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "RingMCPClient/1.0")
+        
+        cResponse = curl_easy_perform_silent(curl)
+        
+        if cResponse != NULL
+            try
+                aRes = json_decode(cResponse)
+                Client.get_router().handle_message(Client, aRes)
+            catch
+                # Silently handle invalid JSON or callback errors to avoid disrupting the client flow,
+                see "Error handling message: " + cCatchError + nl
+            done
+        ok
+        
+        curl_easy_cleanup(curl)
 
-
+    func set_url Url
 

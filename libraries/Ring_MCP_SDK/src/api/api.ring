@@ -95,9 +95,106 @@ class MCPServer
             on "sse"
                 self.oTransport = new SseTransport
                 self.oTransport.run(this)
+            on "ws"
+                self.oTransport = new WebSocketTransport
+                self.oTransport.run(this)
         off
 
 
+class MCPClient
+    name = "RingMCPClient"
+    version = "1.0.0"
+    oTransport = null
+    oRouter = null
+    oSession = null
+    nNextRequestId = 1
+    aPendingRequests = [] # [id, callback]
+
+    func init
+        aPendingRequests = []
+        return self
+
+    func load_config cFileName
+        if not fexists(cFileName)
+            return false
+        ok
+        
+        cContent = read(cFileName)
+        try
+            aConfig = json_decode(cContent)
+            
+            try self.name = aConfig[:clientName] catch done
+            try self.version = aConfig[:version] catch done
+            
+            try 
+                aTrans = aConfig[:transport]
+                if aTrans[:type] = "http"
+                    self.oTransport = new HttpClientTransport {
+                        Url = aTrans[:url]
+                    }
+                    self.oTransport.run(self)
+                ok
+            catch done
+            
+            return true
+        catch
+            return false
+        done
+
+    func get_router
+        if isnull(oRouter)
+            oRouter = new MessageRouter
+        ok
+        return oRouter
+
+    func send_request cMethod, aParams
+        nId = nNextRequestId
+        nNextRequestId++
+        aMsg = get_router().request(nId, cMethod, aParams)
+        send_message(aMsg)
+        return nId
+
+    func send_message aMsg
+        if not isnull(oTransport)
+            oTransport.send(aMsg)
+        ok
+
+    func add_pending_request oReq
+        add(aPendingRequests, oReq)
+
+    func handle_response vId, aMsg
+        for i = 1 to len(aPendingRequests)
+            oReq = aPendingRequests[i]
+            if oReq.id = vId
+                if ismethod(oReq, "callback")
+                    oReq.callback(aMsg)
+                ok
+                del(aPendingRequests, i)
+                return
+            ok
+        next
+        return null
+
+    func get_session
+        if isnull(oSession)
+            oSession = new SessionManager
+        ok
+        return oSession
+
+    # client high level functions
+    func initialize
+        get_session()
+        return send_request("initialize", [
+            :protocolVersion = get_session().cProtocolVersion,
+            :capabilities = [],
+            :clientInfo = [:name = name, :version = version]
+        ])
+
+    func list_tools
+        return send_request("tools/list", [])
+
+    func call_tool cName, aArgs
+        return send_request("tools/call", [:name = cName, :arguments = aArgs])
 
 
 class MCPTool

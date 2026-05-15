@@ -51,4 +51,46 @@ To integrate this professional assistant into your MCP environment (like **Claud
 - **Protocol Compliant**: Fully supports JSON-RPC 2.0 and MCP lifecycle events.
 
 ---
+
+## 🌐 Web & Distributed Architecture
+
+Ring Pro isn't just a standard Stdio server; it demonstrates the **distributed capabilities** of the Ring MCP SDK.
+
+
+
+### The Bolt-Powered Web Server
+`web_server.ring` transforms the Ring Pro logic into a high-performance web service:
+- Exposes tools over **HTTP POST** on port `3000`.
+- Utilizes the Bolt web framework for routing and JSON parsing.
+
+To run the web server:
+```bash
+ring web_server.ring
+```
+
+### The LibCurl-Powered Web Client
+
+```json
+{
+    "clientName": "RingProExplorer",
+    "version": "1.0.0",
+    "transport": {
+        "type": "http",
+        "url": "http://localhost:3000/mcp"
+    }
+}
+```
+
+`web_client.ring` demonstrates how to consume the web server using a dedicated **MCP Client**:
+- Connects to the server using the `HttpClientTransport`.
+- Uses `ref()` mechanics to safely track pending requests.
+- Maps server responses to class-based `callback` functions asynchronously.
+
+To run the web client (ensure the web server is running first):
+```bash
+ring web_client.ring
+```
+
+
+---
 *Built as part of the Ring MCP SDK Examples.*

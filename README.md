@@ -101,6 +101,41 @@ oServer.start("sse")
 
 ---
 
+## 📡 MCP Client Integration (Distributed Architecture)
+
+The SDK isn't just for servers! You can easily create **MCP Clients** that connect to external servers over the network using `libcurl`:
+
+```ring
+load "mcp.ring"
+
+oClient = new MCPClient { name = "RingExplorerClient" }
+
+# Connect via HTTP to the Server
+oClient.oTransport = new HttpClientTransport {
+    Url = "http://localhost:3000/mcp"
+}
+oClient.oTransport.run(oClient)
+
+# Initialize Connection
+oClient.initialize()
+
+# Define a Callback for Async Responses
+class SearchHandler
+    id
+    func callback aRes
+        see "Result: " + aRes[:result][:content][1][:text] + nl
+
+# Track and Send a Request
+nId = oClient.nNextRequestId
+oClient.nNextRequestId++
+oClient.add_pending_request(new SearchHandler { id = nId })
+
+aMsg = oClient.get_router().request(nId, "tools/call", [:name = "search", :arguments = [:query = "class"]])
+oClient.send_message(aMsg)
+```
+
+---
+
 ## 📂 Project Structure & Examples
 
 Explore our curated examples to jumpstart your development:

@@ -17,7 +17,7 @@ func error_response vId, nCode, cMessage
     ]
 
 class MessageRouter
-    func handle_message oServer, aMsg
+    func handle_message oTarget, aMsg
         if not islist(aMsg) return error_response(null, -32600, "Invalid Request") ok
         
         cMethod = ""
@@ -34,6 +34,13 @@ class MessageRouter
             vId = null
         done
         
+        # Detect if it's a Response (has result or error but no method)
+        if cMethod = "" and not isnull(vId)
+            if isobject(oTarget) and ismethod(oTarget, "handle_response")
+                return oTarget.handle_response(vId, aMsg)
+            ok
+        ok
+
         aParams = []
         try 
             aParams = aMsg[:params] 
@@ -43,31 +50,31 @@ class MessageRouter
         
         if cMethod = "" return error_response(vId, -32600, "Method missing") ok
         
-        if isnull(oServer) return error_response(vId, -32603, "oServer is null") ok
-        if isnull(oServer.oSession) return error_response(vId, -32603, "oSession is null") ok
+        if isnull(oTarget) return error_response(vId, -32603, "oTarget is null") ok
+        if isnull(oTarget.oSession) return error_response(vId, -32603, "oSession is null") ok
         
         # Check initialization (except for initialize and ping)
-        if oServer.oSession.bInitialized = false
+        if oTarget.oSession.bInitialized = false
             if cMethod != "initialize" and cMethod != "ping"
                 return error_response(vId, -32002, "Not initialized")
             ok
         ok
 
         if isnull(vId)
-            return handle_notification(oServer, cMethod, aParams)
+            return handle_notification(oTarget, cMethod, aParams)
         ok
 
         switch cMethod
-            on "initialize"   return handle_initialize(oServer, vId, aParams)
-            on "initialized"  return handle_initialized(oServer, aParams)
-            on "ping"         return handle_ping(oServer, vId)
-            on "tools/list"   return handle_tools_list(oServer, vId, aParams)
-            on "tools/call"   return handle_tools_call(oServer, vId, aParams)
-            on "resources/list" return handle_resources_list(oServer, vId, aParams)
-            on "resources/read" return handle_resources_read(oServer, vId, aParams)
-            on "prompts/list"  return handle_prompts_list(oServer, vId, aParams)
-            on "prompts/get"   return handle_prompts_get(oServer, vId, aParams)
-            on "logging/setLevel" return handle_logging_set_level(oServer, vId, aParams)
+            on "initialize"   return handle_initialize(oTarget, vId, aParams)
+            on "initialized"  return handle_initialized(oTarget, aParams)
+            on "ping"         return handle_ping(oTarget, vId)
+            on "tools/list"   return handle_tools_list(oTarget, vId, aParams)
+            on "tools/call"   return handle_tools_call(oTarget, vId, aParams)
+            on "resources/list" return handle_resources_list(oTarget, vId, aParams)
+            on "resources/read" return handle_resources_read(oTarget, vId, aParams)
+            on "prompts/list"  return handle_prompts_list(oTarget, vId, aParams)
+            on "prompts/get"   return handle_prompts_get(oTarget, vId, aParams)
+            on "logging/setLevel" return handle_logging_set_level(oTarget, vId, aParams)
             other             return error_response(vId, -32601, "Method not found: " + cMethod)
         off
 

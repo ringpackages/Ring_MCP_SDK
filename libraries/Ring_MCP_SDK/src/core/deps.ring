@@ -20,6 +20,22 @@ catch
 done
 
 try
+    load "bolt.ring"
+    fputs(stderr, "  [OK] bolt.ring" + nl)
+    
+catch
+    fputs(stderr, "  [ERROR] bolt.ring not found or failed" + nl)
+    fputs(stderr, "  Error: " + cCatchError + nl)
+done
+
+try
+    load "libcurl.ring"
+    fputs(stderr, "  [OK] libcurl.ring" + nl)
+catch
+    fputs(stderr, "  [ERROR] libcurl.ring not found" + nl)
+done
+
+try
     load "stdlibcore.ring"
     fputs(stderr, "  [OK] stdlibcore.ring" + nl)
 catch
