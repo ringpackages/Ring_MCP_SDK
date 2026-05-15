@@ -36,13 +36,9 @@ class StdioTransport
 
     func run oServer
         while true
-            if feof(stdin) bye ok
             cLine = ""
             give cLine
-            if len(cLine) = 0 
-                if feof(stdin) bye ok
-                loop 
-            ok
+            if len(cLine) = 0 exit ok
             cLine = trim(cLine)
             if cLine = "" loop ok
             
