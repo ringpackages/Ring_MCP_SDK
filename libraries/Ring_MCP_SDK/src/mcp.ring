@@ -2,7 +2,13 @@
 
 
 # Load core dependencies and bootstrap
-load "core/deps.ring"
+//load "core/deps.ring"
+load "stdlibcore.ring"
+load "simplejson.ring"
+load "proc.ring"
+//load "bolt.ring"
+load "libcurl.ring"
+
 
 # Load layers in order
 load "schema/schema.ring"

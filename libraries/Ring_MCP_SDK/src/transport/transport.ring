@@ -1,4 +1,4 @@
-load "bolt.ring"
+
 
 aRes = null
 
@@ -53,7 +53,7 @@ class StdioTransport
                 aRes = oServer.get_router().handle_message(oServer, aMsg)
                 if not isnull(aRes)
                     fputs(stdout, mcp_json_encode(aRes) + nl)
-                    
+                    fflush(stdout)
                 ok
             catch
                 fputs(stderr, "Error handling message: " + cCatchError + nl)
@@ -62,7 +62,7 @@ class StdioTransport
 
     func send aMsg
         fputs(stdout, mcp_json_encode(aMsg) + nl)
-       
+        fflush(stdout)
 
 
 class HttpTransport
@@ -161,6 +161,108 @@ class WebSocketTransport
         if not isnull(oBolt)
             oBolt.wsBroadcast(mcp_json_encode(aMsg))
         ok
+
+class StdioClientTransport
+    Command = ""
+    Args = NULL
+    Client = NULL
+    oProcess = null
+    cBuffer = ""
+    
+    func run rClient
+        self.Client = ref(rClient)
+
+        # 1. Initialize process
+        if isnull(oProcess)
+            aCmdLine = [Command]
+            if not isnull(Args)
+                for arg in Args
+                    Add(aCmdLine, arg)
+                next
+            ok
+            # Ring uses + or bitwiseor() for flags, | is logical OR and returns 1
+            nOptions = PROC_SEARCH_USER_PATH + PROC_COMBINED_STDOUT_STDERR + PROC_ENABLE_ASYNC
+            oProcess = new Process(aCmdLine, nOptions) 
+        ok
+        return self
+
+    func get_id aList
+        if islist(aList)
+            for item in aList
+                if islist(item) and len(item) >= 2 and item[1] = "id"
+                    return item[2]
+                ok
+            next
+        ok
+        return NULL
+
+    func send aMsg
+        if isnull(oProcess) return ok
+        
+        # Write to process stdin
+        cJson = mcp_json_encode(aMsg)
+        oProcess.writeLine(cJson)
+        
+        nMsgId = get_id(aMsg)
+        
+        if isnull(nMsgId)
+            processPendingOutput()
+            return 
+        ok
+        
+        # Wait for response
+        nWait = 0
+        while nWait < 1000 # 10 seconds max
+            cData = oProcess.readStdout(4096)
+            if cData != NULL and len(cData) > 0
+                cBuffer += cData
+            ok
+            
+            while true
+                nLineEnd = substr(cBuffer, nl)
+                if nLineEnd = 0 break ok
+                
+                cLine = left(cBuffer, nLineEnd - 1)
+                cBuffer = substr(cBuffer, nLineEnd + len(nl))
+                
+                cLine = trim(cLine)
+                if cLine = "" loop ok
+                
+                try
+                    aRes = json_decode(cLine)
+                    Client.get_router().handle_message(Client, aRes)
+                    
+                    nResId = get_id(aRes)
+                    if not isnull(nResId) and not isnull(nMsgId) and string(nResId) = string(nMsgId)
+                        return # Found response
+                    ok
+                catch 
+                    # Ignore invalid JSON
+                done
+            end
+            
+            sleep(0.01)
+            nWait++
+        end
+
+    func processPendingOutput
+        cData = oProcess.readStdout(4096)
+        if cData != NULL and len(cData) > 0
+            cBuffer += cData
+        ok
+        while true
+            nLineEnd = substr(cBuffer, nl)
+            if nLineEnd = 0 break ok
+            cLine = left(cBuffer, nLineEnd - 1)
+            cBuffer = substr(cBuffer, nLineEnd + len(nl))
+            cLine = trim(cLine)
+            if cLine = "" loop ok
+            
+            try
+                aRes = json_decode(cLine)
+                Client.get_router().handle_message(Client, aRes)
+            catch done
+        end
 
 class HttpClientTransport
     Url = "http://localhost:3000/mcp"
