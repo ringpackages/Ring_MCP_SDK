@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ring Version](https://img.shields.io/badge/Ring-1.21-blue.svg)](https://ring-lang.github.io/)
-[![MCP Version](https://img.shields.io/badge/MCP-1.0.0-green.svg)](https://modelcontextprotocol.io/)
+[![MCP Version](https://img.shields.io/badge/MCP-1.0.1-green.svg)](https://modelcontextprotocol.io/)
 
 A high-performance, professional-grade implementation of the **Model Context Protocol (MCP)** for the **Ring Programming Language**. This SDK empowers developers to build sophisticated MCP servers that seamlessly connect AI models (like Claude) with custom tools, resources, and prompts.
 
@@ -10,7 +10,7 @@ A high-performance, professional-grade implementation of the **Model Context Pro
 
 ## ✨ Key Features
 
-- **🚀 Multi-Transport Mastery**: Seamlessly switch between **Stdio**, **HTTP** (powered by Bolt), and **SSE**.
+- **🚀 Multi-Transport Mastery**: Seamlessly switch between **Stdio**, **HTTP** (powered by HTTPLib), **SSE**, and **Stream** (Long-polling).
 - **🏗️ 6-Layer Architecture**: Engineered for maximum maintainability and scalability.
 - **⚡ Advanced Capabilities**:
     - **Real-time Logging**: Stream server logs directly to AI clients.
@@ -28,9 +28,25 @@ The SDK follows a strict **Professional 6-Layer Design**:
 1.  **Developer API**: High-level intuitive classes (`MCPServer`, `MCPTool`).
 2.  **Schema Engine**: Intelligent parameter validation and schema generation.
 3.  **Protocol Engine**: Full JSON-RPC 2.0 routing and lifecycle management.
-4.  **Transport Layer**: High-performance handlers for Stdio, HTTP, and SSE.
+4.  **Transport Layer**: High-performance handlers for Stdio, HTTP, SSE, and Stream.
 5.  **Middleware Layer**: Chained logic for logging, error handling, and security.
 6.  **Core Foundation**: Dependency management and system bootstrap.
+
+### 📊 System Diagrams
+
+We have generated high-quality vector diagrams to visualize the SDK internals:
+
+#### 1. Core Architecture
+![MCP SDK Architecture](libraries/Ring_MCP_SDK/docs/mcp_architecture.svg)
+
+#### 2. Class Relations
+![MCP Class Diagram](libraries/Ring_MCP_SDK/docs/mcp_classes.svg)
+
+#### 3. Communication Flow
+![MCP Message Flow](libraries/Ring_MCP_SDK/docs/mcp_flow.svg)
+
+#### 4. JSON-RPC Routing
+![MCP Routing Flow](libraries/Ring_MCP_SDK/docs/mcp_routing_flow.svg)
 
 ---
 
@@ -45,7 +61,8 @@ ringpm install Ring_MCP_SDK from Azzeddine2017
 ### 📋 Dependencies
 The SDK leverages these high-quality packages:
 - `simplejson`: Ultra-fast JSON processing.
-- `bolt`: High-performance HTTP framework for Ring.
+- `httplib`: High-performance C++ HTTP Library wrapper for Ring.
+- `svglib`: For rendering SVG diagrams.
 
 ---
 
@@ -79,9 +96,9 @@ oServer.start("stdio")
 
 ---
 
-## 🌐 Enterprise Web Support (HTTP & SSE)
+## 🌐 Enterprise Web Support (HTTP, SSE & Stream)
 
-Leverage the power of the **Bolt** framework for web-scale deployments:
+Leverage the power of the **HTTPLib** framework wrapper for web-scale deployments:
 
 ### HTTP Implementation
 ```ring
