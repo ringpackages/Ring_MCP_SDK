@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ring Version](https://img.shields.io/badge/Ring-1.21-blue.svg)](https://ring-lang.github.io/)
-[![MCP Version](https://img.shields.io/badge/MCP-1.0.1-green.svg)](https://modelcontextprotocol.io/)
+[![MCP Version](https://img.shields.io/badge/MCP-1.0.2-green.svg)](https://modelcontextprotocol.io/)
 
 A high-performance, professional-grade implementation of the **Model Context Protocol (MCP)** for the **Ring Programming Language**. This SDK empowers developers to build sophisticated MCP servers that seamlessly connect AI models (like Claude) with custom tools, resources, and prompts.
 
@@ -23,14 +23,13 @@ A high-performance, professional-grade implementation of the **Model Context Pro
 
 ## 🏛️ Architecture & Design
 
-The SDK follows a strict **Professional 6-Layer Design**:
+The SDK follows a strict **Professional 5-Layer Design**:
 
 1.  **Developer API**: High-level intuitive classes (`MCPServer`, `MCPTool`).
 2.  **Schema Engine**: Intelligent parameter validation and schema generation.
 3.  **Protocol Engine**: Full JSON-RPC 2.0 routing and lifecycle management.
 4.  **Transport Layer**: High-performance handlers for Stdio, HTTP, SSE, and Stream.
 5.  **Middleware Layer**: Chained logic for logging, error handling, and security.
-6.  **Core Foundation**: Dependency management and system bootstrap.
 
 ### 📊 System Diagrams
 
@@ -62,8 +61,8 @@ ringpm install Ring_MCP_SDK from Azzeddine2017
 The SDK leverages these high-quality packages:
 - `simplejson`: Ultra-fast JSON processing.
 - `httplib`: High-performance C++ HTTP Library wrapper for Ring.
-- `svglib`: For rendering SVG diagrams.
-
+- `proc`: For process management.
+- `libcurl`: For HTTP communication.
 ---
 
 ## 🚀 Quick Start: Stdio Mode

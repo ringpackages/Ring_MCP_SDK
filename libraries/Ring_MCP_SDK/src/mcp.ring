@@ -2,7 +2,7 @@
 
 
 # Load core dependencies and bootstrap
-//load "core/deps.ring"
+
 load "stdlibcore.ring"
 load "simplejson.ring"
 load "proc.ring"

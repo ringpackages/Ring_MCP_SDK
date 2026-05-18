@@ -5,11 +5,11 @@ aPackageInfo = [
 	:developer = "",
 	:email = "",
 	:license = "MIT License",
-	:version = "1.0.1",
+	:version = "1.0.2",
 	:ringversion = "1.26",
 	:versions = 	[
 		[
-			:version = "1.0.1",
+			:version = "1.0.2",
 			:branch = "master"
 		]
 	],
@@ -22,6 +22,16 @@ aPackageInfo = [
 		[
 			:name = "httplib",
 			:version = "1.0.14",
+			:providerusername = "ysdragon"
+		],
+		[
+			:name = "proc",
+			:version = "1.0.0",
+			:providerusername = "ysdragon"
+		],
+		[
+			:name = "libcurl",
+			:version = "1.0.18",
 			:providerusername = "ysdragon"
 		]
 	],
@@ -43,7 +53,6 @@ aPackageInfo = [
 		"libraries/Ring_MCP_SDK/scratch/test_success.ring",
 		"libraries/Ring_MCP_SDK/scratch/test_tool_call.ring",
 		"libraries/Ring_MCP_SDK/src/api/api.ring",
-		"libraries/Ring_MCP_SDK/src/core/deps.ring",
 		"libraries/Ring_MCP_SDK/src/mcp.ring",
 		"libraries/Ring_MCP_SDK/src/middleware/middleware.ring",
 		"libraries/Ring_MCP_SDK/src/protocol/protocol.ring",
