@@ -5,11 +5,11 @@ aPackageInfo = [
 	:developer = "",
 	:email = "",
 	:license = "MIT License",
-	:version = "1.0.0",
+	:version = "1.0.1",
 	:ringversion = "1.26",
 	:versions = 	[
 		[
-			:version = "1.0.0",
+			:version = "1.0.1",
 			:branch = "master"
 		]
 	],
@@ -20,8 +20,8 @@ aPackageInfo = [
 			:providerusername = "ysdragon"
 		],
 		[
-			:name = "bolt",
-			:version = "1.0.0",
+			:name = "httplib",
+			:version = "1.0.14",
 			:providerusername = "ysdragon"
 		]
 	],
@@ -31,6 +31,11 @@ aPackageInfo = [
 	],
 	:ringfolderfiles = 	[
 		"bin/load/mcp.ring",
+		"libraries/Ring_MCP_SDK/generate_diagrams.ring",
+		"libraries/Ring_MCP_SDK/docs/mcp_architecture.svg",
+		"libraries/Ring_MCP_SDK/docs/mcp_classes.svg",
+		"libraries/Ring_MCP_SDK/docs/mcp_flow.svg",
+		"libraries/Ring_MCP_SDK/docs/mcp_routing_flow.svg",
 		"libraries/Ring_MCP_SDK/scratch/test_keys.ring",
 		"libraries/Ring_MCP_SDK/scratch/test_r31.ring",
 		"libraries/Ring_MCP_SDK/scratch/test_schema.ring",
@@ -47,6 +52,7 @@ aPackageInfo = [
 		"libraries/Ring_MCP_SDK/tests/test_api.ring",
 		"libraries/Ring_MCP_SDK/tests/test_protocol.ring",
 		"libraries/Ring_MCP_SDK/tests/test_schema.ring",
+		"libraries/Ring_MCP_SDK/tests/transport1.ring",
 		"samples/UsingMcpSdk/examples/advanced_server.ring",
 		"samples/UsingMcpSdk/examples/hello_server.ring",
 		"samples/UsingMcpSdk/examples/http_server.ring",
