@@ -11,7 +11,7 @@ A high-performance, professional-grade implementation of the **Model Context Pro
 ## ✨ Key Features
 
 - **🚀 Multi-Transport Mastery**: Seamlessly switch between **Stdio**, **HTTP** (powered by HTTPLib), **SSE**, and **Stream** (Long-polling).
-- **🏗️ 6-Layer Architecture**: Engineered for maximum maintainability and scalability.
+- **🏗️ 5-Layer Architecture**: Engineered for maximum maintainability and scalability.
 - **⚡ Advanced Capabilities**:
     - **Real-time Logging**: Stream server logs directly to AI clients.
     - **Smart Notifications**: Server-initiated updates (e.g., `listChanged`).
