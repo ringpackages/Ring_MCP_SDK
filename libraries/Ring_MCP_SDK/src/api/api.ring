@@ -95,8 +95,8 @@ class MCPServer
             on "sse"
                 self.oTransport = new SseTransport
                 self.oTransport.run(this)
-            on "ws"
-                self.oTransport = new WebSocketTransport
+            on "stream"
+                self.oTransport = new StreamTransport
                 self.oTransport.run(this)
         off
 

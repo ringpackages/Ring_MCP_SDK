@@ -6,7 +6,7 @@
 load "stdlibcore.ring"
 load "simplejson.ring"
 load "proc.ring"
-load "bolt.ring"
+load "httplib.ring"
 load "libcurl.ring"
 
 
